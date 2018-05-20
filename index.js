@@ -13,11 +13,11 @@ const readdir_ = util.promisify(fs.readdir);
 class InquirerFuzzyPath extends InquirerAutocomplete {
   constructor(question, rl, answers) {
     const rootPath = question.rootPath || '.';
-    const nodeFilter = question.nodeFilter || (() => true);
+    const pathFilter = question.pathFilter || (() => true);
     const _question = Object.assign(
       {},
       question,
-      { source: (_,pattern) => getPaths(rootPath, pattern, nodeFilter) }
+      { source: (_,pattern) => getPaths(rootPath, pattern, pathFilter) }
     );
     super(_question,rl,answers);
   }
@@ -38,7 +38,7 @@ class InquirerFuzzyPath extends InquirerAutocomplete {
   }
 }
 
-function getPaths (rootPath, pattern, nodeFilter) {
+function getPaths (rootPath, pattern, pathFilter) {
   const fuzzOptions = {
     pre: style.green.open,
     post: style.green.close,
@@ -55,7 +55,7 @@ function getPaths (rootPath, pattern, nodeFilter) {
       }
     } catch (err) {
       if (err.code === 'ENOTDIR') {
-        return nodeFilter(err.code === 'ENOTDIR', nodePath) ? [] : [nodePath];
+        return pathFilter(err.code === 'ENOTDIR', nodePath) ? [] : [nodePath];
       } else {
         throw err;
       }
