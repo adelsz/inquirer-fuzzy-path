@@ -1,0 +1,27 @@
+{
+  "name": "inquirer-fuzzy-path",
+  "version": "1.0.0",
+  "description": "Fuzzy file/directory search and select prompt for inquirer.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "fuzzy",
+    "inquirer",
+    "directory",
+    "file",
+    "search",
+    "select"
+  ],
+  "author": "Adel Salakh",
+  "license": "ISC",
+  "dependencies": {
+    "ansi-styles": "^3.2.1",
+    "fuzzy": "^0.1.3",
+    "inquirer": "^5.2.0",
+    "inquirer-autocomplete-prompt": "^0.12.2",
+    "strip-ansi": "^4.0.0"
+  },
+  { "engines" : { "node" : ">=8.0" } }
+}

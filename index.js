@@ -1,0 +1,74 @@
+const fs = require('fs');
+const path = require('path');
+const util = require('util');
+
+const Choices = require('inquirer/lib/objects/choices');
+const InquirerAutocomplete = require('inquirer-autocomplete-prompt');
+const stripAnsi = require('strip-ansi');
+const style = require('ansi-styles');
+const fuzzy = require('fuzzy'); 
+
+const readdir_ = util.promisify(fs.readdir);
+
+class InquirerFuzzyPath extends InquirerAutocomplete {
+  constructor(question, rl, answers) {
+    const rootPath = question.rootPath || '.';
+    const nodeFilter = question.nodeFilter || (() => true);
+    const _question = Object.assign(
+      {},
+      question,
+      { source: (_,pattern) => getPaths(rootPath, pattern, nodeFilter) }
+    );
+    super(_question,rl,answers);
+  }
+  search(searchTerm) {
+    return super.search(searchTerm).then((value) => {
+      this.currentChoices.getChoice = (choiceIndex) => {
+        let choice = Choices.prototype.getChoice.call(this.currentChoices,choiceIndex);
+        return {
+          value: stripAnsi(choice.value),
+          name: stripAnsi(choice.name),
+          short: stripAnsi(choice.name)
+        };
+      };
+    });
+  }
+  onSubmit(line) {
+    super.onSubmit(stripAnsi(line));
+  }
+}
+
+function getPaths (rootPath, pattern, nodeFilter) {
+  const fuzzOptions = {
+    pre: style.green.open,
+    post: style.green.close,
+  };
+  async function listNodes(nodePath) {
+    try {
+      const nodes = await readdir_(nodePath);
+      if (nodes.length > 0) {
+        const nodex = nodes.map(dirName => listNodes(path.join(nodePath,dirName))); 
+        const subNodes = await Promise.all(nodex);
+        return [nodePath].concat(subNodes.flatten());
+      } else {
+        return [nodePath];
+      }
+    } catch (err) {
+      if (err.code === 'ENOTDIR') {
+        return nodeFilter(err.code === 'ENOTDIR', nodePath) ? [] : [nodePath];
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  const nodes = listNodes(rootPath);
+  const filterPromise = nodes.then(
+    nodeList => fuzzy
+      .filter(pattern || "", nodeList, fuzzOptions)
+      .map(e => e.string)
+  );
+  return filterPromise;
+}
+
+module.exports = InquirerFuzzyPath;
