@@ -43,19 +43,25 @@ function getPaths (rootPath, pattern, pathFilter) {
     pre: style.green.open,
     post: style.green.close,
   };
+
+  function nodeOption(nodePath,isDirectory) {
+    return pathFilter(isDirectory, nodePath) ? [nodePath] : [];
+  }
+
   async function listNodes(nodePath) {
     try {
       const nodes = await readdir_(nodePath);
+      const currentNode = nodeOption(nodePath, true);
       if (nodes.length > 0) {
         const nodex = nodes.map(dirName => listNodes(path.join(nodePath,dirName))); 
         const subNodes = await Promise.all(nodex);
-        return [nodePath].concat(subNodes.flatten());
+        return subNodes.reduce((acc,val) => acc.concat(val), currentNode);
       } else {
-        return [nodePath];
+        return currentNode;
       }
     } catch (err) {
       if (err.code === 'ENOTDIR') {
-        return pathFilter(err.code === 'ENOTDIR', nodePath) ? [] : [nodePath];
+        return nodeOption(nodePath, false);
       } else {
         throw err;
       }
