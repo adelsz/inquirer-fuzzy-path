@@ -2,6 +2,8 @@
 
 Fuzzy file/directory search and select prompt for Inquirer.js 
 
+![inquirer-fuzzy-path demo](https://raw.githubusercontent.com/adelsz/inquirer-fuzzy-path/master/recording.gif)
+
 ## Usage
 
 Register the prompt with inquirer:
@@ -20,7 +22,7 @@ Call the prompt:
         // pathFilter allows to filter FS nodes by type and path
       rootPath: 'app',
         // rootPath :: String
-        // Root search/selection directory
+        // Root search directory
       message: 'Select a target directory for your component:',
       default: 'components/',
       suggestOnly: false,
