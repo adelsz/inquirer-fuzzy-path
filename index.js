@@ -6,75 +6,76 @@ const Choices = require('inquirer/lib/objects/choices');
 const InquirerAutocomplete = require('inquirer-autocomplete-prompt');
 const stripAnsi = require('strip-ansi');
 const style = require('ansi-styles');
-const fuzzy = require('fuzzy'); 
+const fuzzy = require('fuzzy');
 
-const readdir_ = util.promisify(fs.readdir);
+const readdir = util.promisify(fs.readdir);
 
-class InquirerFuzzyPath extends InquirerAutocomplete {
-  constructor(question, rl, answers) {
-    const rootPath = question.rootPath || '.';
-    const pathFilter = question.pathFilter || (() => true);
-    const _question = Object.assign(
-      {},
-      question,
-      { source: (_,pattern) => getPaths(rootPath, pattern, pathFilter) }
-    );
-    super(_question,rl,answers);
-  }
-  search(searchTerm) {
-    return super.search(searchTerm).then((value) => {
-      this.currentChoices.getChoice = (choiceIndex) => {
-        let choice = Choices.prototype.getChoice.call(this.currentChoices,choiceIndex);
-        return {
-          value: stripAnsi(choice.value),
-          name: stripAnsi(choice.name),
-          short: stripAnsi(choice.name)
-        };
-      };
-    });
-  }
-  onSubmit(line) {
-    super.onSubmit(stripAnsi(line));
-  }
-}
-
-function getPaths (rootPath, pattern, pathFilter) {
+function getPaths(rootPath, pattern, pathFilter) {
   const fuzzOptions = {
     pre: style.green.open,
     post: style.green.close,
   };
 
-  function nodeOption(nodePath,isDirectory) {
+  function nodeOption(nodePath, isDirectory) {
     return pathFilter(isDirectory, nodePath) ? [nodePath] : [];
   }
 
   async function listNodes(nodePath) {
     try {
-      const nodes = await readdir_(nodePath);
+      const nodes = await readdir(nodePath);
       const currentNode = nodeOption(nodePath, true);
       if (nodes.length > 0) {
-        const nodex = nodes.map(dirName => listNodes(path.join(nodePath,dirName))); 
+        const nodex = nodes.map(dirName => listNodes(path.join(nodePath, dirName)));
         const subNodes = await Promise.all(nodex);
-        return subNodes.reduce((acc,val) => acc.concat(val), currentNode);
-      } else {
-        return currentNode;
+        return subNodes.reduce((acc, val) => acc.concat(val), currentNode);
       }
+      return currentNode;
     } catch (err) {
       if (err.code === 'ENOTDIR') {
         return nodeOption(nodePath, false);
-      } else {
-        throw err;
       }
+      throw err;
     }
   }
 
   const nodes = listNodes(rootPath);
   const filterPromise = nodes.then(
     nodeList => fuzzy
-      .filter(pattern || "", nodeList, fuzzOptions)
-      .map(e => e.string)
+      .filter(pattern || '', nodeList, fuzzOptions)
+      .map(e => e.string),
   );
   return filterPromise;
 }
+
+class InquirerFuzzyPath extends InquirerAutocomplete {
+  constructor(question, rl, answers) {
+    const rootPath = question.rootPath || '.';
+    const pathFilter = question.pathFilter || (() => true);
+    const questionBase = Object.assign(
+      {},
+      question,
+      { source: (_, pattern) => getPaths(rootPath, pattern, pathFilter) },
+    );
+    super(questionBase, rl, answers);
+  }
+
+  search(searchTerm) {
+    return super.search(searchTerm).then(() => {
+      this.currentChoices.getChoice = (choiceIndex) => {
+        const choice = Choices.prototype.getChoice.call(this.currentChoices, choiceIndex);
+        return {
+          value: stripAnsi(choice.value),
+          name: stripAnsi(choice.name),
+          short: stripAnsi(choice.name),
+        };
+      };
+    });
+  }
+
+  onSubmit(line) {
+    super.onSubmit(stripAnsi(line));
+  }
+}
+
 
 module.exports = InquirerFuzzyPath;

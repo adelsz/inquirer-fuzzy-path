@@ -24,5 +24,12 @@
     "inquirer-autocomplete-prompt": "^0.12.2",
     "strip-ansi": "^4.0.0"
   },
-  "engines" : { "node" : ">=8.0" }
+  "engines": {
+    "node": ">=8.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.4.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  }
 }
