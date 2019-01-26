@@ -23,9 +23,16 @@ function getPaths(rootPath, pattern, pathFilter, scanFilter) {
   async function listNodes(nodePath) {
     try {
       const entries = await readdir(nodePath, { withFileTypes: true });
-      const nodes = entries
-        .filter(entry => typeof entry === 'string' || scanFilter(entry.isDirectory(), entry.name))
-        .map(entry => entry.name);
+
+      let nodes
+      // Detect if on node > 10.10 which supports readdir withFileTypes
+      if (typeof entries[0] === 'string') {
+        nodes = entries
+      } else {
+        nodes = entries
+          .filter(entry => scanFilter(entry.isDirectory(), entry.name))
+          .map(entry => entry.name);
+      }
 
       const currentNode = nodeOption(nodePath, true);
       if (nodes.length > 0) {
