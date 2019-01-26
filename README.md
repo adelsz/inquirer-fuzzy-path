@@ -1,6 +1,6 @@
 # inquirer-fuzzy-path
 
-Fuzzy file/directory search and select prompt for Inquirer.js 
+Fuzzy file/directory search and select prompt for Inquirer.js
 
 ![inquirer-fuzzy-path demo](https://raw.githubusercontent.com/adelsz/inquirer-fuzzy-path/master/recording.gif)
 
@@ -19,7 +19,10 @@ Call the prompt:
       name: 'path',
       pathFilter: (isDirectory, nodePath) => isDirectory,
         // pathFilter :: (Bool, String) -> Bool
-        // pathFilter allows to filter FS nodes by type and path
+        // pathFilter allows you to filter the fs entries     returned to the user
+      scanFilter: (isDirectory, nodePath) => isDirectory,
+        // scanFilter :: (Bool, String) -> Bool
+        // scanFilter allows you to control where this plugin searches for files, and is applied only when reading the directory. As an example, for better performance, you might want to filter out `node-modules` using this function.
       rootPath: 'app',
         // rootPath :: String
         // Root search directory

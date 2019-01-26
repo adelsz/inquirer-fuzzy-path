@@ -10,7 +10,7 @@ const fuzzy = require('fuzzy');
 
 const readdir = util.promisify(fs.readdir);
 
-function getPaths(rootPath, pattern, pathFilter) {
+function getPaths(rootPath, pattern, pathFilter, scanFilter) {
   const fuzzOptions = {
     pre: style.green.open,
     post: style.green.close,
@@ -24,7 +24,7 @@ function getPaths(rootPath, pattern, pathFilter) {
     try {
       const entries = await readdir(nodePath, { withFileTypes: true });
       const nodes = entries
-        .filter(entry => nodeOption(entry.name, entry.isDirectory()).length > 0)
+        .filter(entry => scanFilter(entry.isDirectory(), entry.name))
         .map(entry => entry.name);
 
       const currentNode = nodeOption(nodePath, true);
@@ -55,11 +55,10 @@ class InquirerFuzzyPath extends InquirerAutocomplete {
   constructor(question, rl, answers) {
     const rootPath = question.rootPath || '.';
     const pathFilter = question.pathFilter || (() => true);
-    const questionBase = Object.assign(
-      {},
-      question,
-      { source: (_, pattern) => getPaths(rootPath, pattern, pathFilter) },
-    );
+    const scanFilter = question.scanFilter || question.pathFilter || (() => true);
+    const questionBase = Object.assign({}, question, {
+      source: (_, pattern) => getPaths(rootPath, pattern, pathFilter, scanFilter),
+    });
     super(questionBase, rl, answers);
   }
 
