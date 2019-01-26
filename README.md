@@ -20,6 +20,7 @@ Call the prompt:
       pathFilter: (isDirectory, nodePath) => isDirectory,
         // pathFilter :: (Bool, String) -> Bool
         // pathFilter allows to filter FS nodes by type and path
+        // example: (isDirectory, nodePath) => !nodePath.includes('node_modules'),
       rootPath: 'app',
         // rootPath :: String
         // Root search directory
