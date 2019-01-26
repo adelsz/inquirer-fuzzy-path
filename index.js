@@ -56,9 +56,12 @@ class InquirerFuzzyPath extends InquirerAutocomplete {
     const rootPath = question.rootPath || '.';
     const pathFilter = question.pathFilter || (() => true);
     const scanFilter = question.scanFilter || question.pathFilter || (() => true);
-    const questionBase = Object.assign({}, question, {
-      source: (_, pattern) => getPaths(rootPath, pattern, pathFilter, scanFilter),
-    });
+    const questionBase = Object.assign(
+      {},
+      question,
+      {
+        source: (_, pattern) => getPaths(rootPath, pattern, pathFilter, scanFilter),
+      });
     super(questionBase, rl, answers);
   }
 
