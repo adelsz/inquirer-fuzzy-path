@@ -22,7 +22,11 @@ function getPaths(rootPath, pattern, pathFilter) {
 
   async function listNodes(nodePath) {
     try {
-      const nodes = await readdir(nodePath);
+      const entries = await readdir(nodePath, { withFileTypes: true });
+      const nodes = entries
+        .filter(entry => nodeOption(entry.name, entry.isDirectory()).length > 0)
+        .map(entry => entry.name);
+
       const currentNode = nodeOption(nodePath, true);
       if (nodes.length > 0) {
         const nodex = nodes.map(dirName => listNodes(path.join(nodePath, dirName)));
