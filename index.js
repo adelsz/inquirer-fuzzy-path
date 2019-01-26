@@ -24,7 +24,7 @@ function getPaths(rootPath, pattern, pathFilter, scanFilter) {
     try {
       const entries = await readdir(nodePath, { withFileTypes: true });
       const nodes = entries
-        .filter(entry => scanFilter(entry.isDirectory(), entry.name))
+        .filter(entry => typeof entry === 'string' || scanFilter(entry.isDirectory(), entry.name))
         .map(entry => entry.name);
 
       const currentNode = nodeOption(nodePath, true);
