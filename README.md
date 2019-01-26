@@ -19,10 +19,19 @@ Call the prompt:
       name: 'path',
       pathFilter: (isDirectory, nodePath) => isDirectory,
         // pathFilter :: (Bool, String) -> Bool
-        // pathFilter allows you to filter the fs entries     returned to the user
+        // pathFilter allows you to filter the fs entries
+        //   returned to the user. Returning false here
+        //   will prevent the directory from being scanned
+        //   unless you provide a separate scanFilter
+        //   function below.
       scanFilter: (isDirectory, nodePath) => isDirectory,
         // scanFilter :: (Bool, String) -> Bool
-        // scanFilter allows you to control where this plugin searches for files, and is applied only when reading the directory. As an example, for better performance, you might want to filter out `node-modules` using this function.
+        // scanFilter allows you to control where this
+        //   plugin searches for files, and is applied
+        //   only when reading the directory. As an
+        //   example, for better performance, you might
+        //   want to filter out `node-modules` using this
+        //   function.
       rootPath: 'app',
         // rootPath :: String
         // Root search directory
