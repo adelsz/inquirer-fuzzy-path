@@ -17,10 +17,14 @@ Call the prompt:
     {
       type: 'fuzzypath',
       name: 'path',
-      pathFilter: (isDirectory, nodePath) => isDirectory,
-        // pathFilter :: (Bool, String) -> Bool
-        // pathFilter allows to filter FS nodes by type and path
-        // example: (isDirectory, nodePath) => !nodePath.includes('node_modules'),
+      excludePath: nodePath => nodePath.startsWith('node_modules'),
+        // excludePath :: (String) -> Bool
+        // excludePath to exclude some paths from the file-system scan
+      itemType: 'any',
+        // itemType :: 'any' | 'directory' | 'file'
+        // specify the type of nodes to display
+        // default value: 'any'
+        // example: itemType: 'file' - hides directories from the item list
       rootPath: 'app',
         // rootPath :: String
         // Root search directory

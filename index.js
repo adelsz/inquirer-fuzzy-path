@@ -10,32 +10,30 @@ const fuzzy = require('fuzzy');
 
 const readdir = util.promisify(fs.readdir);
 
-function getPaths(rootPath, pattern, pathFilter) {
+function getPaths(rootPath, pattern, excludePath, itemType) {
   const fuzzOptions = {
     pre: style.green.open,
     post: style.green.close,
   };
 
-  function nodeOption(nodePath, isDirectory) {
-    return pathFilter(isDirectory, nodePath) ? [nodePath] : [];
-  }
-
   async function listNodes(nodePath) {
     try {
-      const currentNode = nodeOption(nodePath, true);
-      if (currentNode.length === 0) {
-        return currentNode;
+      if (excludePath(nodePath)) {
+        return [];
       }
       const nodes = await readdir(nodePath);
+      const currentNode = (itemType !== 'file' ? [nodePath] : []);
       if (nodes.length > 0) {
-        const nodesWithPath = nodes.map(nodeName => listNodes(path.join(nodePath, nodeName)));
+        const nodesWithPath = nodes.map(
+          nodeName => listNodes(path.join(nodePath, nodeName)),
+        );
         const subNodes = await Promise.all(nodesWithPath);
         return subNodes.reduce((acc, val) => acc.concat(val), currentNode);
       }
       return currentNode;
     } catch (err) {
       if (err.code === 'ENOTDIR') {
-        return nodeOption(nodePath, false);
+        return itemType !== 'directory' ? [nodePath] : [];
       }
       throw err;
     }
@@ -53,11 +51,12 @@ function getPaths(rootPath, pattern, pathFilter) {
 class InquirerFuzzyPath extends InquirerAutocomplete {
   constructor(question, rl, answers) {
     const rootPath = question.rootPath || '.';
-    const pathFilter = question.pathFilter || (() => true);
+    const excludePath = question.excludePath || (() => false);
+    const itemType = question.itemType || 'any';
     const questionBase = Object.assign(
       {},
       question,
-      { source: (_, pattern) => getPaths(rootPath, pattern, pathFilter) },
+      { source: (_, pattern) => getPaths(rootPath, pattern, excludePath, itemType) },
     );
     super(questionBase, rl, answers);
   }
