@@ -1,6 +1,6 @@
 {
   "name": "inquirer-fuzzy-path",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Fuzzy file/directory search and select prompt for inquirer.",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "select"
   ],
   "author": "adelsz",
-  "license": "ISC",
+  "license": "MIT",
   "homepage": "https://github.com/adelsz/inquirer-fuzzy-path",
   "dependencies": {
     "ansi-styles": "^3.2.1",

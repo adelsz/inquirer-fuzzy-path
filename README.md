@@ -37,6 +37,9 @@ Call the prompt:
   ]);
 ```
 
+## Change log
+* In version 2.0.0 option `filterPath` was deprecated. Please use `excludePath` and `itemType` instead.
+
 ## Related
 
 - [inquirer](https://github.com/SBoudrias/Inquirer.js) - A collection of common interactive command line user interfaces
