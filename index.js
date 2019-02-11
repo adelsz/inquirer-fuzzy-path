@@ -35,7 +35,7 @@ function getPaths(rootPath, pattern, excludePath, itemType) {
       if (err.code === 'ENOTDIR') {
         return itemType !== 'directory' ? [nodePath] : [];
       }
-      throw err;
+      return [];
     }
   }
 
