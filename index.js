@@ -10,7 +10,13 @@ const fuzzy = require('fuzzy');
 
 const readdir = util.promisify(fs.readdir);
 
-function getPaths(rootPath, pattern, excludePath, itemType) {
+function getPaths(
+  rootPath,
+  pattern,
+  excludePath,
+  itemType,
+  defaultItem,
+) {
   const fuzzOptions = {
     pre: style.green.open,
     post: style.green.close,
@@ -41,9 +47,15 @@ function getPaths(rootPath, pattern, excludePath, itemType) {
 
   const nodes = listNodes(rootPath);
   const filterPromise = nodes.then(
-    nodeList => fuzzy
-      .filter(pattern || '', nodeList, fuzzOptions)
-      .map(e => e.string),
+    (nodeList) => {
+      const filteredNodes = fuzzy
+        .filter(pattern || '', nodeList, fuzzOptions)
+        .map(e => e.string);
+      if (!pattern && defaultItem) {
+        filteredNodes.unshift(defaultItem);
+      }
+      return filteredNodes;
+    },
   );
   return filterPromise;
 }
@@ -56,7 +68,15 @@ class InquirerFuzzyPath extends InquirerAutocomplete {
     const questionBase = Object.assign(
       {},
       question,
-      { source: (_, pattern) => getPaths(rootPath, pattern, excludePath, itemType) },
+      {
+        source: (_, pattern) => getPaths(
+          rootPath,
+          pattern,
+          excludePath,
+          itemType,
+          question.default,
+        ),
+      },
     );
     super(questionBase, rl, answers);
   }

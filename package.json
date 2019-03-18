@@ -1,6 +1,6 @@
 {
   "name": "inquirer-fuzzy-path",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Fuzzy file/directory search and select prompt for inquirer.",
   "main": "index.js",
   "scripts": {
