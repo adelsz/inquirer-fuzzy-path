@@ -25,12 +25,12 @@ function getPaths(
 
   async function listNodes(nodePath, levels) {
     try {
-      if (excludePath(nodePath) || levels < 0) {
+      if (excludePath(nodePath)) {
         return [];
       }
       const nodes = await readdir(nodePath);
       const currentNode = (itemType !== 'file' ? [nodePath] : []);
-      if (nodes.length > 0) {
+      if (nodes.length > 0 && levels > 0) {
         const nodesWithPath = nodes.map(
           nodeName => listNodes(path.join(nodePath, nodeName), levels - 1),
         );
