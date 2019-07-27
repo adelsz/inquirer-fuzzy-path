@@ -33,8 +33,8 @@ Call the prompt:
       suggestOnly: false,
         // suggestOnly :: Bool
         // Restrict prompt answer to available choices or use them as suggestions
-      level: 5,
-        // level :: integer
+      levels: 5,
+        // levels :: integer
         // limit the level of sub-folders to scan. Defaults to 3
     }
   ]);
