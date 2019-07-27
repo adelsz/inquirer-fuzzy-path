@@ -35,7 +35,7 @@ Call the prompt:
         // Restrict prompt answer to available choices or use them as suggestions
       levels: 5,
         // levels :: integer
-        // limit the level of sub-folders to scan. Defaults to 3
+        // limit the levels of sub-folders to scan. Defaults to 3
     }
   ]);
 ```
