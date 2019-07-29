@@ -16,23 +16,29 @@ function getPaths(
   excludePath,
   itemType,
   defaultItem,
-  levels = 3
+  depthLimit,
 ) {
   const fuzzOptions = {
     pre: style.green.open,
     post: style.green.close,
   };
 
-  async function listNodes(nodePath, levels) {
+  async function listNodes(nodePath, level) {
     try {
       if (excludePath(nodePath)) {
         return [];
       }
       const nodes = await readdir(nodePath);
       const currentNode = (itemType !== 'file' ? [nodePath] : []);
-      if (nodes.length > 0 && levels > 0) {
+      if (
+        nodes.length > 0
+        && (depthLimit === undefined || level >= 0)
+      ) {
         const nodesWithPath = nodes.map(
-          nodeName => listNodes(path.join(nodePath, nodeName), levels - 1),
+          nodeName => listNodes(
+            path.join(nodePath, nodeName),
+            depthLimit ? level - 1 : undefined,
+          ),
         );
         const subNodes = await Promise.all(nodesWithPath);
         return subNodes.reduce((acc, val) => acc.concat(val), currentNode);
@@ -46,7 +52,7 @@ function getPaths(
     }
   }
 
-  const nodes = listNodes(rootPath, levels);
+  const nodes = listNodes(rootPath, depthLimit);
   const filterPromise = nodes.then(
     (nodeList) => {
       const filteredNodes = fuzzy
@@ -63,9 +69,12 @@ function getPaths(
 
 class InquirerFuzzyPath extends InquirerAutocomplete {
   constructor(question, rl, answers) {
-    const rootPath = question.rootPath || '.';
-    const excludePath = question.excludePath || (() => false);
-    const itemType = question.itemType || 'any';
+    const {
+      depthLimit,
+      itemType = 'any',
+      rootPath = '.',
+      excludePath = () => false,
+    } = question;
     const questionBase = Object.assign(
       {},
       question,
@@ -76,6 +85,7 @@ class InquirerFuzzyPath extends InquirerAutocomplete {
           excludePath,
           itemType,
           question.default,
+          depthLimit,
         ),
       },
     );
