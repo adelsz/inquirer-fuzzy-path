@@ -16,22 +16,23 @@ function getPaths(
   excludePath,
   itemType,
   defaultItem,
+  levels = 3
 ) {
   const fuzzOptions = {
     pre: style.green.open,
     post: style.green.close,
   };
 
-  async function listNodes(nodePath) {
+  async function listNodes(nodePath, levels) {
     try {
       if (excludePath(nodePath)) {
         return [];
       }
       const nodes = await readdir(nodePath);
       const currentNode = (itemType !== 'file' ? [nodePath] : []);
-      if (nodes.length > 0) {
+      if (nodes.length > 0 && levels > 0) {
         const nodesWithPath = nodes.map(
-          nodeName => listNodes(path.join(nodePath, nodeName)),
+          nodeName => listNodes(path.join(nodePath, nodeName), levels - 1),
         );
         const subNodes = await Promise.all(nodesWithPath);
         return subNodes.reduce((acc, val) => acc.concat(val), currentNode);
@@ -45,7 +46,7 @@ function getPaths(
     }
   }
 
-  const nodes = listNodes(rootPath);
+  const nodes = listNodes(rootPath, levels);
   const filterPromise = nodes.then(
     (nodeList) => {
       const filteredNodes = fuzzy
