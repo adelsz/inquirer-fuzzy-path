@@ -1,7 +1,8 @@
 # inquirer-fuzzy-path
 
-![npm](https://img.shields.io/npm/v/inquirer-fuzzy-path)
-![npm](https://img.shields.io/npm/dw/inquirer-fuzzy-path)
+
+[![npm](https://img.shields.io/npm/v/inquirer-fuzzy-path)](https://www.npmjs.com/package/inquirer-fuzzy-path)
+[![npm](https://img.shields.io/npm/dw/inquirer-fuzzy-path)](https://www.npmjs.com/package/inquirer-fuzzy-path)
 
 Fuzzy file/directory search and select prompt for Inquirer.js 
 
