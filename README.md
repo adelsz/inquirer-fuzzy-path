@@ -41,11 +41,17 @@ Call the prompt:
         // depthLimit :: integer >= 0
         // Limit the depth of sub-folders to scan
         // Defaults to infinite depth if undefined
+      resultFilter: path => path.match(/(\.js|\.css)$/)
+        // resultFilter :: (String) -> Bool
+        // resultFilter to filter path list to show on options
+        // example: resultFilter: path => path.match(/(\.js|\.css)$/) - show only results with .js or .css extension
+        //          This example will include `dir.css` directory if itemType in 'any' or 'directory'
     }
   ]);
 ```
 
 ## Change log
+* In version 2.2.0 new option `resultFilter` was added.
 * In version 2.1.0 new option `depthLimit` was added.
 * In version 2.0.0 option `filterPath` was deprecated. Please use `excludePath` and `itemType` instead.
 

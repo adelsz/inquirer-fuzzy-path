@@ -17,6 +17,7 @@ function getPaths(
   itemType,
   defaultItem,
   depthLimit,
+  resultFilter,
 ) {
   const fuzzOptions = {
     pre: style.green.open,
@@ -56,7 +57,7 @@ function getPaths(
   const filterPromise = nodes.then(
     (nodeList) => {
       const filteredNodes = fuzzy
-        .filter(pattern || '', nodeList, fuzzOptions)
+        .filter(pattern || '', nodeList.filter(resultFilter), fuzzOptions)
         .map(e => e.string);
       if (!pattern && defaultItem) {
         filteredNodes.unshift(defaultItem);
@@ -74,6 +75,7 @@ class InquirerFuzzyPath extends InquirerAutocomplete {
       itemType = 'any',
       rootPath = '.',
       excludePath = () => false,
+      resultFilter = () => true,
     } = question;
     const questionBase = Object.assign(
       {},
@@ -86,6 +88,7 @@ class InquirerFuzzyPath extends InquirerAutocomplete {
           itemType,
           question.default,
           depthLimit,
+          resultFilter,
         ),
       },
     );
