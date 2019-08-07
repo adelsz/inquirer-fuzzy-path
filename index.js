@@ -17,11 +17,14 @@ function getPaths(
   itemType,
   defaultItem,
   depthLimit,
+  fileExtensions,
 ) {
   const fuzzOptions = {
     pre: style.green.open,
     post: style.green.close,
   };
+
+  const filterFiles = (fileExtensions === null) ? null : new RegExp(`(${fileExtensions.join('|')})$`);
 
   async function listNodes(nodePath, level) {
     try {
@@ -46,7 +49,8 @@ function getPaths(
       return currentNode;
     } catch (err) {
       if (err.code === 'ENOTDIR') {
-        return itemType !== 'directory' ? [nodePath] : [];
+        const eligible = (!filterFiles || nodePath.match(filterFiles));
+        return (itemType !== 'directory' && eligible) ? [nodePath] : [];
       }
       return [];
     }
@@ -74,6 +78,7 @@ class InquirerFuzzyPath extends InquirerAutocomplete {
       itemType = 'any',
       rootPath = '.',
       excludePath = () => false,
+      fileExtensions = null,
     } = question;
     const questionBase = Object.assign(
       {},
@@ -86,6 +91,7 @@ class InquirerFuzzyPath extends InquirerAutocomplete {
           itemType,
           question.default,
           depthLimit,
+          fileExtensions,
         ),
       },
     );

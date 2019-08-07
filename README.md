@@ -41,11 +41,16 @@ Call the prompt:
         // depthLimit :: integer >= 0
         // Limit the depth of sub-folders to scan
         // Defaults to infinite depth if undefined
+      fileExtensions: [],
+        // fileExtensions :: Array
+        // Filter files by extension list
+        // Example: ['.html', '.json']
     }
   ]);
 ```
 
 ## Change log
+* In version 2.2.0 new option `fileExtensions` was added.
 * In version 2.1.0 new option `depthLimit` was added.
 * In version 2.0.0 option `filterPath` was deprecated. Please use `excludePath` and `itemType` instead.
 
