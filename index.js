@@ -59,7 +59,7 @@ function getPaths(
       const preFilteredNodes =
         !excludeFilter
         ? nodeList
-        : nodeList.filter(excludeFilter);
+        : nodeList.filter(node => !excludeFilter(node));
 
       const filteredNodes = fuzzy
         .filter(pattern || '', preFilteredNodes, fuzzOptions)
