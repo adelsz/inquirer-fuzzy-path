@@ -24,6 +24,10 @@ Call the prompt:
       excludePath: nodePath => nodePath.startsWith('node_modules'),
         // excludePath :: (String) -> Bool
         // excludePath to exclude some paths from the file-system scan
+      excludeFilter: nodePath => nodePath != '.',
+        // excludeFilter :: (String) -> Bool
+        // excludeFilter to exclude some paths from the final list, e.g. '.'
+        // note: as opposed to `excludePath`, returning false excludes items
       itemType: 'any',
         // itemType :: 'any' | 'directory' | 'file'
         // specify the type of nodes to display
