@@ -49,6 +49,7 @@ Call the prompt:
 ```
 
 ## Change log
+* In version 2.2.0 new option `excludeFilter` was added.
 * In version 2.1.0 new option `depthLimit` was added.
 * In version 2.0.0 option `filterPath` was deprecated. Please use `excludePath` and `itemType` instead.
 
