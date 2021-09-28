@@ -22,7 +22,7 @@
   "license": "MIT",
   "homepage": "https://github.com/adelsz/inquirer-fuzzy-path",
   "dependencies": {
-    "ansi-styles": "^3.2.1",
+    "ansi-styles": "^6.1.0",
     "fuzzy": "^0.1.3",
     "inquirer": "^6.0.0",
     "inquirer-autocomplete-prompt": "^1.0.2",
