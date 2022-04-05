@@ -18,6 +18,7 @@ function getPaths(
   itemType,
   defaultItem,
   depthLimit,
+  answers,
 ) {
   const fuzzOptions = {
     pre: style.green.open,
@@ -26,7 +27,7 @@ function getPaths(
 
   async function listNodes(nodePath, level) {
     try {
-      if (excludePath(nodePath)) {
+      if (excludePath(nodePath, answers)) {
         return [];
       }
       const nodes = await readdir(nodePath);
@@ -59,7 +60,7 @@ function getPaths(
       const preFilteredNodes =
         !excludeFilter
         ? nodeList
-        : nodeList.filter(node => !excludeFilter(node));
+        : nodeList.filter(node => !excludeFilter(node, answers));
 
       const filteredNodes = fuzzy
         .filter(pattern || '', preFilteredNodes, fuzzOptions)
@@ -94,6 +95,7 @@ class InquirerFuzzyPath extends InquirerAutocomplete {
           itemType,
           question.default,
           depthLimit,
+          answers,
         ),
       },
     );

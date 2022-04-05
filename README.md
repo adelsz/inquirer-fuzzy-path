@@ -4,7 +4,7 @@
 [![npm](https://img.shields.io/npm/v/inquirer-fuzzy-path)](https://www.npmjs.com/package/inquirer-fuzzy-path)
 [![npm](https://img.shields.io/npm/dw/inquirer-fuzzy-path)](https://www.npmjs.com/package/inquirer-fuzzy-path)
 
-Fuzzy file/directory search and select prompt for Inquirer.js 
+Fuzzy file/directory search and select prompt for Inquirer.js
 
 ![inquirer-fuzzy-path demo](https://raw.githubusercontent.com/adelsz/inquirer-fuzzy-path/master/recording.gif)
 
@@ -21,12 +21,14 @@ Call the prompt:
     {
       type: 'fuzzypath',
       name: 'path',
-      excludePath: nodePath => nodePath.startsWith('node_modules'),
-        // excludePath :: (String) -> Bool
-        // excludePath to exclude some paths from the file-system scan
-      excludeFilter: nodePath => nodePath == '.',
-        // excludeFilter :: (String) -> Bool
-        // excludeFilter to exclude some paths from the final list, e.g. '.'
+      excludePath: (nodePath, answers) => nodePath.startsWith('node_modules'),
+        // excludePath :: (String, Object) -> Bool
+        // excludePath to exclude some paths from the file-system scan. Use `answers` object to get previous answers
+        // for further customization.
+      excludeFilter: (nodePath, answers) => nodePath == '.',
+        // excludeFilter :: (String, Object) -> Bool
+        // excludeFilter to exclude some paths from the final list, e.g. '.'. Use `answers` object to get previous
+        // answers for further customization.
       itemType: 'any',
         // itemType :: 'any' | 'directory' | 'file'
         // specify the type of nodes to display
