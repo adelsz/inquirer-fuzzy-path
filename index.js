@@ -56,6 +56,10 @@ function getPaths(
   const nodes = listNodes(rootPath, depthLimit);
   const filterPromise = nodes.then(
     (nodeList) => {
+      //
+      // Ensure paths are resolved against rootPath
+      //
+      nodeList = nodeList.map(fullPath => path.relative(rootPath, fullPath))
       const preFilteredNodes =
         !excludeFilter
         ? nodeList
